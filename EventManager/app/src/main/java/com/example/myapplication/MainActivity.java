@@ -219,6 +219,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title(i.getCurrentEventString()));
         }
         mMap.setOnInfoWindowClickListener(this);
+        mMap.addMarker(new MarkerOptions().position(new LatLng(49.8412761, 23.9999626)).title("Best hackahton").snippet("hackahton"));
     }
 
     @Override
