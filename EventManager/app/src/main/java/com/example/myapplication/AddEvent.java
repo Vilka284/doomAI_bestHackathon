@@ -73,6 +73,19 @@ public class AddEvent extends AppCompatActivity implements OnMapReadyCallback {
                     marker = mMap.addMarker(options);
                 }
             });
+            Button Addbtn = findViewById(R.id.Addbutton);
+            final EditText editText = findViewById(R.id.editText2);
+            final EditText editText1 = findViewById(R.id.editText3);
+
+            Addbtn.setOnClickListener((v)->{
+                    MainActivity ma = new MainActivity();
+                    MainActivity.setEvents(new Event("sdf", "wefda", marker.getPosition().latitude, marker.getPosition().longitude));
+                Intent inte = new Intent(getApplicationContext(), MainActivity.class);
+
+                startActivity(inte);
+
+            });
+
         }
     }
     public void onMapReady(final GoogleMap map) {
