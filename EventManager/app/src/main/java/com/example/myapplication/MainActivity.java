@@ -29,13 +29,25 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
+
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
 
     private GoogleMap mMap;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
+    //Events markers
+    static ArrayList<Event> eventsMarkers = new ArrayList<>();
 
+    public static ArrayList<Event> getEvents() {
+        return eventsMarkers;
+    }
+
+    public static void setEvents(ArrayList<Event> events) {
+        eventsMarkers = events;
+    }
+    //
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
