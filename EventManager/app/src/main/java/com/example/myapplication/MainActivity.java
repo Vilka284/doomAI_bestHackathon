@@ -24,15 +24,19 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, LocationSource.OnLocationChangedListener, GoogleMap.OnInfoWindowClickListener {
 
     private GoogleMap mMap;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
@@ -156,8 +160,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toast.makeText(this, "Location permission not granted, " +
                         "showing default location",
                 Toast.LENGTH_SHORT).show();
-        LatLng redmond = new LatLng(47.6739881, -122.121512);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(redmond));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(49.7, 23.9)));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(5));
     }
 
     @Override
@@ -204,4 +208,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     mMap.addCircle(circleOptions);
                 }
             };
+
+    @Override
+    public void onLocationChanged(Location location) {
+        mMap.clear();
+        for (Event i:
+             eventsMarkers) {
+            double longitude = i.getLongitude();
+            double latitude = i.getLattitude();
+            mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title(i.getCurrentEventString()));
+        }
+        mMap.setOnInfoWindowClickListener(this);
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        Random rnd = new Random(eventsMarkers.size());
+        int i = rnd.nextInt();
+        Event event = eventsMarkers.get(i);
+        Toast.makeText(this, event.getCurrentEventDescriptionString(),
+                Toast.LENGTH_LONG).show();
+    }
 }
