@@ -1,31 +1,21 @@
 package com.example.myapplication;
 
-import android.app.AlertDialog;
-import android.app.FragmentManager;
 import android.app.usage.UsageEvents;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -37,77 +27,60 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AddEvent extends AppCompatActivity implements OnMapReadyCallback {
-    GoogleMap mMap;
-    Marker marker;
+    SupportMapFragment mapFragment;
+    private GoogleMap mMap;
+    double lattitude;
+    double longitude;
+    public static String currentEventString, currentEventDescriptionString;
+
+    ArrayList<Event> eventsMarker = new ArrayList<>();
+
+    TextInputLayout currentEvent;
+    TextInputLayout currentEventDescription;
+    TextInputEditText currentEventEdit;
+    TextInputEditText currentEventDescriptionEdit;
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_event);
-        SupportMapFragment mapFrag = (SupportMapFragment)
-                getSupportFragmentManager().
-                        findFragmentById(R.id.mapAdd);
-        mapFrag.getMapAsync(this);
+        currentEvent = findViewById(R.id.textAddEventName);
+        currentEventDescription = findViewById(R.id.textAddDescription);
+        currentEventEdit = findViewById(R.id.AddEventEditText);;
+        currentEventDescriptionEdit = findViewById(R.id.AddDescriptionEditText);
+        Button AddEvent = findViewById(R.id.AddEvent);
+        AddEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                eventsMarker.add(new Event(currentEventString, currentEventDescriptionString, lattitude, longitude));
+                MainActivity.setEvents(eventsMarker);
 
-        if(mMap != null) {
+                Intent buttonIntent = new Intent(AddEvent.this, MainActivity.class);
+                startActivity(buttonIntent);
+            }
+        });
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.mapAdd);
+        mapFragment.getMapAsync(this);
 
-            mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-                @Override
-                public void onMapLongClick (LatLng latLng){
-                    Geocoder geocoder =
-                            new Geocoder(AddEvent.this);
-                    List<Address> list;
-                    try {
-                        list = geocoder.getFromLocation(latLng.latitude,
-                                latLng.longitude, 1);
-                    } catch (IOException e) {
-                        return;
-                    }
-                    Address address = list.get(0);
-                    if (marker != null) {
-                        marker.remove();
-                    }
+    }
 
-                    MarkerOptions options = new MarkerOptions()
-                            .title(address.getLocality())
-                            .position(new LatLng(latLng.latitude,
-                                    latLng.longitude));
-                    marker = mMap.addMarker(options);
-                }
-            });
-            Button Addbtn = findViewById(R.id.Addbutton);
-            final EditText editText = findViewById(R.id.editText2);
-            final EditText editText1 = findViewById(R.id.editText3);
 
-            Addbtn.setOnClickListener((v)->{
-                    MainActivity ma = new MainActivity();
-                    MainActivity.setEvents(new Event("sdf", "wefda", marker.getPosition().latitude, marker.getPosition().longitude));
-                Intent inte = new Intent(getApplicationContext(), MainActivity.class);
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(49.7, 23.9)));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(5));
 
-                startActivity(inte);
+    }
 
-            });
-
+    protected void setStatusBarTranslucent(boolean makeTranslucent) {
+        if (makeTranslucent) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        } else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
     }
-    public void onMapReady(final GoogleMap map) {
-        this.mMap = map;
-    }
-    public void findLocation(View v) throws IOException {
 
-        EditText et = (EditText)findViewById(R.id.editText);
-        String location = et.getText().toString();
-        Geocoder geocoder = new Geocoder(this);
-        List<Address> list = geocoder.getFromLocationName(location, 1);
-        Address add = list.get(0);
-        String locality = add.getLocality();
-        LatLng ll = new LatLng(add.getLatitude(), add.getLongitude());
-        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(ll, 15);
-        mMap.moveCamera(update);
-        if(marker != null)
-            marker.remove();
-        MarkerOptions markerOptions = new MarkerOptions()
-                .title(locality)
-                .position(new LatLng(add.getLatitude(), add.getLongitude()));
-        marker = mMap.addMarker(markerOptions);
 
-    }
 }

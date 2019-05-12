@@ -48,8 +48,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return eventsMarkers;
     }
 
-    public static void setEvents(Event events) {
-        eventsMarkers.add(events);
+    public static void setEvents(ArrayList<Event> events) {
+        eventsMarkers = events;
     }
     //
     @Override
@@ -142,10 +142,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.setMinZoomPreference(11);
-        for (Event e: eventsMarkers) {
-            mMap.addMarker(new MarkerOptions().position(new LatLng(e.lattitude,e.longitude)).title(e.currentEventString));
-        }
-
     }
     private void enableMyLocationIfPermitted() {
         if (ContextCompat.checkSelfPermission(this,
@@ -158,7 +154,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (mMap != null) {
             mMap.setMyLocationEnabled(true);
         }
-
     }
 
     private void showDefaultLocation() {
@@ -191,9 +186,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 @Override
                 public boolean onMyLocationButtonClick() {
                     mMap.setMinZoomPreference(15);
-
                     return false;
-
                 }
             };
 
@@ -213,13 +206,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     circleOptions.strokeWidth(6);
 
                     mMap.addCircle(circleOptions);
-
                 }
             };
 
     @Override
     public void onLocationChanged(Location location) {
-<<<<<<< HEAD
         mMap.clear();
         for (Event i:
              eventsMarkers) {
@@ -229,17 +220,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         mMap.setOnInfoWindowClickListener(this);
         mMap.addMarker(new MarkerOptions().position(new LatLng(49.8412761, 23.9999626)).title("Best hackahton").snippet("hackahton"));
-=======
-//        mMap.clear();
-//        for (Event i:
-//             eventsMarkers) {
-//            double longitude = i.getLongitude();
-//            double latitude = i.getLattitude();
-//            mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title(i.getCurrentEventString()));
-//        }
-//        mMap.setOnInfoWindowClickListener(this);
-        mMap.addMarker(new MarkerOptions().position(new LatLng(eventsMarkers.get(0).lattitude, eventsMarkers.get(0).longitude)));
->>>>>>> f67dd1cb8cacd5f2bdc7f5ebfc73acab1b19a174
     }
 
     @Override
@@ -249,13 +229,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Event event = eventsMarkers.get(i);
         Toast.makeText(this, event.getCurrentEventDescriptionString(),
                 Toast.LENGTH_LONG).show();
-
     }
-    public void AddM(Event e){
-
-            mMap.addMarker(new MarkerOptions().position(new LatLng(e.lattitude,e.longitude)).title(e.currentEventString));
-
-
-    }
-
 }
